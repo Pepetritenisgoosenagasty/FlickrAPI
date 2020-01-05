@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AJAX Flickr Photo Search</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script>
+        $(document).ready(function () {
+          $("form").submit(function (e) {
+              e.preventDefault();
+             var $searchField = $("#search");
+             var $button = $(".btn");
+             if ($searchField.val() === '') {
+                 alert("Search for something");
+             } else {
+             
+             $searchField.prop('disabled', true);
+             $button.attr('disabled', true).text("Searching");
+
+            
+             // Get JSON with jQuery Ajax
+            var flickrAPI = "https://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?";
+            var animal = $searchField.val();
+            var flickrOptions = {
+                tags : animal,
+                format : "json"
+            };
+
+            function displayPhotos (data) {
+                var output = '<div class="">';
+                $.each(data.items, function (i, photo) {
+                    output += ` <a href="${photo.link}">
+                    <img src="${photo.media.m}" alt="..." class="img-thumbnail" style=" width:200px;">
+                            </div>
+                            </a>`
+                            ;
+                });
+                $('a').attr('target', '_blank');
+                $('.photo').html(output);
+                $searchField.prop('disabled', false);
+                $button.attr('disabled', false).text("Search");
+            }
+            $.getJSON(flickrAPI, flickrOptions,displayPhotos);
+
+        }
+          });
+
+          
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="col-12">
+            <div class="card card-body mt-5">
+                <h4 class="text-dark">Flickr Photo Search</h4>
+                  <p class="text-info"> </p>
+                  <form class="form-inline ">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Type a search term" aria-label="Search" id="search">
+                    <button class="btn btn-outline-info my-2 my-sm-0" id="btn" type="submit">Search</button>
+                  </form>
+                 
+                  <!-- Images -->
+                  <div class=" mt-4">
+                      <div class="row">
+                        <p class="photo"></p>
+                      </div>
+                  </div>
+                
+            </div>
+        </div>
+    </div>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
